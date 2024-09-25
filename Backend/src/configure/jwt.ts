@@ -1,5 +1,7 @@
 import Jwt  from "jsonwebtoken";
-const secretKey ="2456987"
+import dotenv from 'dotenv'
+dotenv.config()
+const secretKey =process.env.SECRETKEY as string
 export const jwtToken = async(user_id:string)=>{
     try {
         const payload ={user_id:user_id}

@@ -1,7 +1,18 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaTrash } from 'react-icons/fa'
+import { Task } from '../interface/userInterface'
+interface props{
+  taskData:Task[]
+  deleteTask:(taskId:string)=>void 
 
-const Completed = () => {
+}
+const Completed:React.FC<props> = ({taskData,deleteTask}) => {
+  const [completedTask,setCompletedTasks]=useState<Task[]>([])
+  useEffect(()=>{
+setCompletedTasks(taskData)
+  },[taskData])
+  console.log(completedTask);
+  
   return (
    
 <div className="relative overflow-x-auto">
@@ -27,27 +38,27 @@ const Completed = () => {
       </tr>
     </thead>
     <tbody>
-      <tr className="bg-white border-b text-black hover:bg-green-100 transition-colors">
+     {completedTask.map((task)=>{return(<> <tr className="bg-white border-b text-black hover:bg-green-100 transition-colors">
         <th scope="row" className="px-4 py-2 font-medium whitespace-nowrap">
-          Study JS
+         {task.taskname}
         </th>
         <td className="px-4 py-2">
-          12/09/22
+         {task.startdate}
         </td>
         <td className="px-4 py-2">
-          12/09/22
+         {task.enddate}
         </td>
         <td className="px-4 py-2">
-          <span className="font-semibold">Completed</span>
+          <span className="font-semibold text-green-500">{task.status}</span>
         </td>
        
         <td className="px-6 py-4 ">
               
-              <button className="flex items-center text-red-600 hover:underline">
+              <button onClick={()=>deleteTask(task._id as string)} className="flex items-center text-red-600 hover:underline">
                 <FaTrash className="mr-1" /> Delete
               </button>
             </td>
-      </tr>
+      </tr></>)})}
     </tbody>
   </table>
 </div>

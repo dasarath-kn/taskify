@@ -9,10 +9,10 @@ import { User } from '../interface/userInterface'
 
 const Login = () => {
     let [showpassword, setShowpassword] = useState<boolean>(false)
+    const navigate =useNavigate()
   let passwordvisibility = () => {
     setShowpassword(!showpassword)
   }
-  const navigate =useNavigate()
   const {errors,handleBlur,handleChange,handleSubmit,touched} =useFormik({
     initialValues:{
         email:'',
@@ -22,6 +22,7 @@ const Login = () => {
            let response = await login(Data as User)
            if(response?.data.success){
             localStorage.setItem("UserToken",response.data.token)
+            localStorage.setItem("id",response.data.id)
               navigate('/dashboard')
            }else{
             

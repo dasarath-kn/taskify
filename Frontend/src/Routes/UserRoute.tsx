@@ -11,11 +11,17 @@ const UserRoute = () => {
   return (
     <>
     <Routes>
+      <Route path='' element={<UserLogin/>}>
+        <Route path='/' element={<LoginPage/>}/>
         <Route path='/login' element={<LoginPage/>}/>
         <Route path='/signup' element={<SignUpPage/>}/>
+        </Route>
+        <Route path='' element={<UserLogout/>}>
+
         <Route path='/dashboard' element={<DashboardPage/>}/>
         <Route path='/addtask' element={<AddTaskPage/>}/>
         <Route path='/completed' element={<TaskCompletedPage/>}/>
+        </Route>
     </Routes>
     </>
   )
