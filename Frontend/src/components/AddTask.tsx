@@ -5,8 +5,6 @@ import { useEffect, useState } from 'react'
 import { useFormik } from 'formik'
 import { TaskvalidationSchema } from '../validations/Taskvalidation'
 import socket from '../configuration/Socket'
-import { useSelector } from 'react-redux'
-import { RootState } from '../redux/Store'
 import toast, { Toaster } from 'react-hot-toast'
 import { changeStatus, taskData } from '../api/userApi'
 import { Task } from '../interface/userInterface'
@@ -20,7 +18,9 @@ const AddTask = () => {
     const [taskDatas,setTaskDatas]=useState<Task[]>([])
     const [selectedTask,setSelectedTask]=useState<Task>()
     const [updated,setUpdated]=useState<boolean>(false)
-    const userId = useSelector((state: RootState) => state.user.userId)
+    const [searchTask,setSearchTask]=useState<Task[]>([])
+    const [search,setSearch]=useState<string>()
+
     const id = localStorage.getItem('id')
     const { handleChange, touched, errors, handleSubmit, resetForm,values } = useFormik({
         enableReinitialize:true,
@@ -74,6 +74,8 @@ const AddTask = () => {
                 const response = await taskData()
                 if(response?.data.success){
                     setTaskDatas(response?.data.taskData)
+                    setSearchTask(response.data.taskData)  
+
                 }
             } catch (error) {
                 console.error(error);
@@ -128,43 +130,63 @@ const AddTask = () => {
             
         }
     }
-    
+    const handleSearch =(e: React.ChangeEvent<HTMLInputElement>)=>{
+        let data = e.target.value
+        setSearch(data)
+        if(!data){
+            setTaskDatas(searchTask)
+        }
+    }
+    const SearchHandle=()=>{
+       let data = taskDatas.filter((val)=>val.taskname.startsWith(search as string))
+        setTaskDatas(data)
+    }
     return (
         <div className="flex w-full min-h-screen">
              <SideBar />
-            <div className="w-5/6 flex flex-col items-center p-16">
-                <div className="w-full h-auto bg-gray-300 flex flex-col md:flex-row justify-between items-center p-4 rounded-lg shadow-md space-y-4 md:space-y-0">
-                    <div className="flex flex-col items-start">
-                        <p className="text-lg font-semibold">Create Task</p>
-                        <p className="text-sm">Create a new task</p>
-                    </div>
+             <div className="flex flex-col items-center p-16 w-full sm:w-full md:w-5/6"> {/* Update width for small screens */}
+        <div className="w-full h-auto bg-gray-300 flex flex-col md:flex-row justify-between items-center p-4 rounded-lg shadow-md space-y-4 md:space-y-0">
+            <div className="flex flex-col items-start">
+                <p className="text-lg font-semibold">Create Task</p>
+                <p className="text-sm">Create a new task</p>
+            </div>
 
-                    <div className="flex-grow flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 px-4 md:space-x-4">
-                        <input
-                            type="text"
-                            placeholder="Search tasks..."
-                            className="w-full max-w-md p-2 border border-gray-400 rounded-md"
-                        />
-                        <button
-                            className="text-orange-500 border-2 border-orange-500 px-4 py-2 rounded-md w-full md:w-auto">
-                            Search
-                        </button>
-                    </div>
+            <div className="flex-grow flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 px-4 md:space-x-4">
+                <input
+                    type="text" 
+                    onChange={(e) => handleSearch(e)}
+                    placeholder="Search tasks..."
+                    className="w-full max-w-md p-2 border border-gray-400 rounded-md"
+                />
+                <button 
+                    onClick={SearchHandle}
+                    className="text-orange-500 border-2 border-orange-500 px-4 py-2 rounded-md w-full md:w-auto"
+                >
+                    Search
+                </button>
+            </div>
 
-                    <div className="flex items-center">
-                        <FaPlus onClick={() => {setModal(!modal),setSelectedTask(undefined)}} className="text-2xl text-gray-700 cursor-pointer" />
-                    </div>
-                </div>
-
-
-                <div className="w-full mt-4">
-                    <Table datas={taskDatas}updateStatus={handleStatus}deleteTask={handleDelete}editTask={handleedit} />
-                </div>
-                <Toaster
-                    position="top-right"
-                    reverseOrder={false}
+            <div className="flex items-center">
+                <FaPlus 
+                    onClick={() => { setModal(!modal), setSelectedTask(undefined) }} 
+                    className="text-2xl text-gray-700 cursor-pointer" 
                 />
             </div>
+        </div>
+
+        <div className="w-full mt-4">
+            <Table 
+                datas={taskDatas} 
+                updateStatus={handleStatus} 
+                deleteTask={handleDelete} 
+                editTask={handleedit} 
+            />
+        </div>
+        <Toaster
+            position="top-right"
+            reverseOrder={false}
+        />
+    </div>
             {modal && <div id="crud-modal" aria-hidden="true" className="bg-black bg-opacity-60 flex justify-center overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
                 <div className="relative p-4 w-full max-w-md max-h-full">
                     <div className="relative bg-white rounded-lg shadow">

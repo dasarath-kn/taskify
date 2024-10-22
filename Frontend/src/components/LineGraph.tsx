@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import {
   LineChart,
   Line,
@@ -8,16 +9,27 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-
-const LineGraph = () => {
+interface props{
+  datas:Number[]
+}
+const LineGraph:React.FC<props> = ({datas}) => {
+  const [completedCount,setCompletedCount]=useState<Number[]>([])
+useEffect(()=>{
+  setCompletedCount(datas)
+},[datas])
   const data = [
-    { name: 'Jan', value: 4000 },
-    { name: 'Feb', value: 3000 },
-    { name: 'Mar', value: 2000 },
-    { name: 'Apr', value: 2780 },
-    { name: 'May', value: 1890 },
-    { name: 'Jun', value: 2390 },
-    { name: 'Jul', value: 3490 },
+    { name: 'Jan', value: completedCount[0] },
+    { name: 'Feb', value: completedCount[1] },
+    { name: 'Mar', value: completedCount[2] },
+    { name: 'Apr', value: completedCount[3] },
+    { name: 'May', value: completedCount[4] },
+    { name: 'Jun', value: completedCount[5] },
+    { name: 'Jul', value: completedCount[6] },
+    { name: 'Aug', value: completedCount[7] },
+    { name: 'Sep', value: completedCount[8] },
+    { name: 'Oct', value: completedCount[9] },
+    { name: 'Nov', value: completedCount[10] },
+    { name: 'Dec', value: completedCount[11] },
   ];
 
   return (

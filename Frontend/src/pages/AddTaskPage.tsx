@@ -1,4 +1,3 @@
-import React from 'react'
 import AddTask from '../components/AddTask'
 
 const AddTaskPage = () => {

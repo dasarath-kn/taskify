@@ -13,6 +13,7 @@ const Dashboard = () => {
   const [completed,setCompleted]=useState<Number>(0)
   const [pending,setPending]=useState<Number>(0)
   const [ongoing,setOngoing]=useState<Number>(0)
+  const [completedCount,setCompletedCount]=useState<Number[]>([])
   const pieChartData = {
     labels: ['Completed', 'Ongoing', 'Pending'],
     datasets: [
@@ -50,6 +51,7 @@ useEffect(()=>{
         setCompleted(response.data.taskCompletedCount)
         setPending(response.data.taskPendingCount)
         setOngoing(response.data.taskOngoingCount)
+        setCompletedCount(response.data.monthlyCounts)
         dispatch(addDetails(response.data.userData._id))
       }
     } catch (error) {
@@ -90,7 +92,7 @@ console.log(completed,ongoing,pending);
             <PieChart data={pieChartData} options={pieChartOptions} />
           </div>
           <div className="w-full lg:w-1/3 h-96 flex justify-center items-center">
-            <LineGraph />
+            <LineGraph datas={completedCount} />
           </div>
         </div>
       </div>

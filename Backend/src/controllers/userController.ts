@@ -66,9 +66,32 @@ export const userData = async(req:Request,res:Response)=>{
         const taskPendingCount = await taskModel.find({userId:userId,status:"Pending"}).countDocuments()       
         const taskOngoingCount = await taskModel.find({userId:userId,status:"Ongoing"}).countDocuments()       
         console.log(taskCompletedCount,taskOngoingCount,taskPendingCount);
+        const currentYear = new Date().getFullYear();
+        
+        const result = await taskModel.aggregate([
+            { 
+                $match: { status: 'Completed', enddate: { $regex: `^${currentYear}` } }
+            },
+            {
+                $group: {
+                    _id: { $month: { $dateFromString: { dateString: "$enddate" } } },
+                    count: { $sum: 1 } 
+                }
+            },
+            { 
+                $sort: { _id: 1 }
+            }
+        ]);
+
+        const monthlyCounts = Array(12).fill(0);
+
+        result.forEach(item => {
+            monthlyCounts[item._id - 1] = item.count; 
+        });
+        console.log(monthlyCounts);
         
         if(userData){
-            res.status(200).json({success:true,message:"Userdata sent successfully",userData,taskCompletedCount,taskOngoingCount,taskPendingCount})
+            res.status(200).json({success:true,message:"Userdata sent successfully",userData,taskCompletedCount,taskOngoingCount,taskPendingCount,monthlyCounts})
         }else{
             res.status(400).json({success:false,message:"Failed to sent userdata"})
         }
