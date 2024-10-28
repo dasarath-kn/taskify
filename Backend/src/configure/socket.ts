@@ -20,12 +20,18 @@ export const initializeSocket = (server: any) => {
             if(data){
                 data.userId =user_id
                 console.log(data);
+                const {taskname} =data
+                const datas =await taskModel.findOne({taskname:taskname})
+                if(datas){
+                    socket.emit('task_failed', { message: "Task already successfully"});
+   
+                }else{
                 
                const tasks= new taskModel(data)
                 await tasks.save()
                     socket.emit('task_added', { message: "Task added successfully"});
                 
-            }
+            }}
             console.log(data,user_id);
             
         })

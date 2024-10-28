@@ -56,14 +56,21 @@ const AddTask = () => {
             toast.success(message)
             
         }
+        const handleTaskFailed =({message}:TaskEventData)=>{
+            toast.error(message)
+            
+        }
         socket.on("task_added",handleTaskAdded )
         socket.on("task_deleted",handleTaskDeleted)
         socket.on("task_edited",handleTaskEdited)
+        socket.on("task_failed",handleTaskFailed)
 
         return () => {    
             socket.off("task_added", handleTaskAdded);
             socket.off("task_deleted", handleTaskDeleted);
             socket.off("task_edited",handleTaskEdited)
+            socket.off("task_failed",handleTaskFailed)
+
         };
 
     
